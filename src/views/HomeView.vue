@@ -18,7 +18,9 @@
                 <th>#</th>
                 <th>From</th>
                 <th>To</th>
+                <th>Subject</th>
                 <th>Content</th>
+
               </tr>
             </thead>
           </DataTable>
@@ -52,6 +54,7 @@ export default {
         { data: null, render: function (data, type, row, meta) { return `${meta.row + 1}`; } },
         { data: "_source.from" },  
         { data: "_source.to" },    
+        { data: "_source.subject" },
         { data: "_source.body" },  
       ],
     };
