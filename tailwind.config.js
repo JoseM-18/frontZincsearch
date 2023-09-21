@@ -9,6 +9,7 @@ export default {
       colors: {
         'primary': '#17B4DA',
         'secondary': '#2F2F2F',
+        'tertiary': '#3085C3',
       }
     },
     fontFamily: {
@@ -16,6 +17,7 @@ export default {
     },
     container: {
       center: true,
+      padding: '1rem',
     },
     screens: {
       sm: '640px',
