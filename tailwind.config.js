@@ -16,7 +16,7 @@ export default {
       Lato: ['Lato, sans-serif'],
     },
     container: {
-      center: true,
+      center:true,
       padding: '1rem',
     },
     screens: {
