@@ -21,7 +21,7 @@
           <table id="tabla" class="table table-striped table-bordered table-hover" style="width:100%">
             <thead>
               <tr>
-                <th>#</th>
+                <th class="display display-none">#</th>
                 <th>Date</th>
                 <th>From</th>
                 <th>To</th>
@@ -31,7 +31,7 @@
             </thead>
             <tbody>
               <tr v-for="(email, index) in emails" :key="index">
-                <td>{{ index + 1 }}</td>
+                <td class="display display-none">{{ index + 1 }}</td>
                 <td>{{ email._source.date }}</td>
                 <td>{{ email._source.from }}</td>
                 <td>{{ seeAllContent(email._source.to, index) }}</td>
@@ -40,37 +40,31 @@
 
                 <button
                   class="btn btn-primary mb-4 transition delay-150 duration-300 ease-in-out bg-cyan-700 rounded-full h-7 w-7 hover:bg-sky-500 mx-2 overflow-clip mt-5"
-                  @click="expandBody(email._source.from,email._source.to,email._source.body, index)">
+                  @click="expandBody(email._source.from, email._source.to, email._source.body, index)">
                   {{ showFullContent && indexEmail === index ? "-" : "+" }}
                 </button>
               </tr>
             </tbody>
           </table>
         </div>
-        <textarea v-if="showFullContent" disabled cols="90"
-          class="mt-10 mb-60 px-4 rounded-lg py-2 border border-gray-300 form-control
-           bg-tertiary border-none" id="comment">From: {{ from }}{{"\n" + "To: " + to }}
-          {{"\n" + body }}
+        <textarea v-if="showFullContent" disabled cols="90" class="mt-10 mb-60 px-4 rounded-lg py-2 border border-gray-300 form-control
+           bg-tertiary border-none" id="comment">From: {{ from }}{{ "\n" + "To: " + to }}
+          {{ "\n" + body }}
           </textarea>
       </div>
     </div>
   </main>
 </template>
 <script>
-import axios from "axios";
+import api from "../api/api";
 import DataTable from "datatables.net-vue3";
 import DataTableLib from "datatables.net-bs5";
-import "datatables.net-responsive-bs5";
-import Buttons from "datatables.net-buttons-bs5";
-import ButtonsHtml5 from "datatables.net-buttons/js/buttons.html5.js";
 DataTable.use(DataTableLib);
-DataTable.use(ButtonsHtml5);
 
 export default {
   data() {
     return {
       searchQuery: "",
-      searchResults: [],
       emails: null,
       from: null,
       to: null,
@@ -102,6 +96,11 @@ export default {
               visible: false,
               searchable: true,
             },
+            {
+              targets: [0],
+              visible: false,
+              searchable: false,
+            },
           ],
         });
       });
@@ -113,23 +112,20 @@ export default {
           this.body = null;
           this.showFullContent = false;
           this.indexEmail = null;
-          const result = await axios.get(`http://localhost:9090/search?q=${this.searchQuery}`);
-          this.searchResults = result.data;
-          this.emails = this.searchResults.hits.hits;
+          const result = await api(this.searchQuery)
+          this.emails = result
+          console.log(result);
           if ($.fn.DataTable.isDataTable("#tabla")) {
             $("#tabla").DataTable().destroy();
           }
           this.getTabla();
           this.cargando = false;
-        } else {
-          this.searchResults = [];
         }
       } catch (error) {
         console.log(error);
       }
     },
     expandBody(from, to, body, index) {
-
       this.from = from;
       this.to = to;
       this.body = body;
